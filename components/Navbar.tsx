@@ -23,15 +23,22 @@ export default function Navbar() {
   const handleSignOut = async () => {
     await authSignOut();
     setApiToken(null);
-    router.push("/");
+    router.push("/login");
   };
+
+  const isAdmin = session?.user?.role === "admin";
 
   const navLinks = session
     ? [
         { href: "/", label: "Home" },
         { href: "/explore", label: "Explore" },
-        { href: "/courses/manage", label: "My Classes" },
-        { href: "/courses/new", label: "Add Course" },
+        { href: "/courses/manage", label: isAdmin ? "All Courses" : "My Classes" },
+        ...(isAdmin
+          ? [
+              { href: "/courses/new", label: "Add Course" },
+              { href: "/admin", label: "Admin" },
+            ]
+          : []),
         { href: "/about", label: "About" },
       ]
     : [
@@ -68,7 +75,7 @@ export default function Navbar() {
               <span className="text-sm text-foreground/60">
                 {session.user.name || session.user.email}
               </span>
-              <Button isIconOnly variant="ghost" onPress={handleSignOut}>
+              <Button isIconOnly variant="ghost" aria-label="Sign out" onPress={handleSignOut}>
                 <FiLogOut className="text-lg" />
               </Button>
             </>
@@ -88,6 +95,7 @@ export default function Navbar() {
           isIconOnly
           variant="ghost"
           className="md:hidden"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
           onPress={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <FiX className="text-lg" /> : <FiMenu className="text-lg" />}

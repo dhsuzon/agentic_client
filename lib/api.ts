@@ -12,7 +12,7 @@ export function getApiToken() {
 
 export async function api<T = any>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -22,7 +22,6 @@ export async function api<T = any>(
     headers["Authorization"] = `Bearer ${_bearerToken}`;
   }
   const res = await fetch(`${API_URL}${endpoint}`, {
-    credentials: "include",
     headers,
     ...options,
   });
@@ -96,6 +95,29 @@ export function getCategories() {
   return api<{ categories: string[] }>("/api/courses/categories");
 }
 
+export function enrollCourse(courseId: string) {
+  return api<{ enrollment: any }>("/api/enrollments", {
+    method: "POST",
+    body: JSON.stringify({ courseId }),
+  });
+}
+
+export function getMyEnrollments() {
+  return api<{ enrollments: any[] }>("/api/enrollments/my");
+}
+
+export function unenrollCourse(courseId: string) {
+  return api<{ message: string }>(`/api/enrollments/${courseId}`, {
+    method: "DELETE",
+  });
+}
+
+export function getReviewsByCourse(courseId: string) {
+  return api<{ reviews: any[]; averageRating: number; totalReviews: number }>(
+    `/api/reviews/${courseId}`,
+  );
+}
+
 export function uploadToImgBB(file: File): Promise<{ url: string }> {
   const formData = new FormData();
   formData.append("image", file);
@@ -104,6 +126,6 @@ export function uploadToImgBB(file: File): Promise<{ url: string }> {
     {
       method: "POST",
       body: formData,
-    }
+    },
   ).then((r) => r.json());
 }

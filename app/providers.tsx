@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AIChatAssistant from "@/components/AIChatAssistant";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
       <ToastContainer position="bottom-right" theme="dark" />
+      <AIChatAssistant />
     </QueryClientProvider>
   );
 }

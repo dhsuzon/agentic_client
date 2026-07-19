@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Card, TextField, Input, Label } from "@heroui/react";
+import { Button, Card } from "@heroui/react";
 import { FiUpload, FiArrowLeft } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { getCourseById, updateCourse } from "@/lib/api";
@@ -102,10 +102,10 @@ export default function EditCoursePage() {
     );
   }
 
-  if (course.ownerId !== session.user.id) {
+  if (session.user?.role !== "admin") {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-lg">You don&apos;t have permission to edit this course</p>
+        <p className="text-lg">Only admins can edit courses</p>
         <Button variant="ghost" onPress={() => router.push("/courses/manage")}>
           Back to My Courses
         </Button>
@@ -134,24 +134,27 @@ export default function EditCoursePage() {
       </Button>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Edit Course</h1>
+        <h1 className="text-3xl font-bold text-foreground dark:text-white">Edit Course</h1>
       </div>
 
-      <Card.Root>
+      <Card.Root className="rounded-xl">
         <Card.Header>
           <Card.Title>Course Details</Card.Title>
         </Card.Header>
         <Card.Content>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <TextField.Root isRequired>
-              <Label>Course Title</Label>
-              <Input.Root
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground/70">
+                Course Title
+              </label>
+              <input
                 name="title"
                 required
                 defaultValue={course.title}
                 placeholder="Enter course title"
+                className="h-10 w-full rounded-lg border border-default-200 bg-background px-3 text-sm outline-none focus:border-primary"
               />
-            </TextField.Root>
+            </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-foreground/70">
@@ -183,14 +186,17 @@ export default function EditCoursePage() {
               </select>
             </div>
 
-            <TextField.Root>
-              <Label>Price ($)</Label>
-              <Input.Root
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground/70">
+                Price ($)
+              </label>
+              <input
                 name="price"
                 type="number"
                 defaultValue={String(course.price)}
+                className="h-10 w-full rounded-lg border border-default-200 bg-background px-3 text-sm outline-none focus:border-primary [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
-            </TextField.Root>
+            </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-foreground/70">

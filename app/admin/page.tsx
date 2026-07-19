@@ -3,41 +3,28 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button, Card, Skeleton, Chip } from "@heroui/react";
-import { FiPlus, FiTrash2, FiEye, FiBook } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiEye, FiBook, FiShield } from "react-icons/fi";
 import { toast } from "react-toastify";
-import {
-  getMyEnrollments,
-  getCourses,
-  deleteCourse,
-  enrollCourse,
-} from "@/lib/api";
+import { getCourses, deleteCourse } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-export default function ManageCoursesPage() {
+export default function AdminPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: session, isPending: authLoading } = useSession();
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const isAdmin = session?.user?.role === "admin";
 
-  const { data: enrollData, isLoading: enrollLoading } = useQuery<any>({
-    queryKey: ["my-enrollments"],
-    queryFn: getMyEnrollments,
-    enabled: !!session && !isAdmin,
-  });
-
-  const { data: allCoursesData, isLoading: allCoursesLoading } = useQuery<any>({
+  const { data, isLoading } = useQuery<any>({
     queryKey: ["courses", "all"],
     queryFn: () => getCourses({ limit: "100" }),
-    enabled: !!session && isAdmin,
+    enabled: !!session && session.user?.role === "admin",
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteCourse,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       toast.success("Course deleted");
       setDeleteId(null);
@@ -47,58 +34,56 @@ export default function ManageCoursesPage() {
     },
   });
 
-  const isLoading = isAdmin ? allCoursesLoading : enrollLoading;
-
-  const courses = isAdmin
-    ? allCoursesData?.courses || []
-    : (enrollData?.enrollments || [])
-        .map((e: any) => e.course || e)
-        .filter(Boolean);
-
   if (authLoading) return null;
 
   if (!session) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-lg">Sign in to manage your courses</p>
-        <Button
-          variant="primary"
-          className="bg-primary text-white"
-          onPress={() => router.push("/login")}
-        >
+        <p className="text-lg">Sign in to access the admin panel</p>
+        <Button variant="primary" onPress={() => router.push("/login")}>
           Sign In
         </Button>
       </div>
     );
   }
 
+  if (session.user?.role !== "admin") {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <FiShield className="text-5xl text-danger" />
+        <p className="text-lg">Access denied. Admin only.</p>
+        <Button variant="ghost" onPress={() => router.push("/")}>
+          Go Home
+        </Button>
+      </div>
+    );
+  }
+
+  const courses = data?.courses || [];
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground dark:text-white">
-            {isAdmin ? "All Courses" : "My Classes"}
+            Admin Panel
           </h1>
           <p className="mt-1 text-foreground/60">
-            {isAdmin
-              ? "Manage all courses on the platform"
-              : "Courses you are enrolled in"}
+            Manage all courses on the platform
           </p>
         </div>
-        {isAdmin && (
-          <Button
-            variant="primary"
-            className="bg-primary text-white"
-            onPress={() => router.push("/courses/new")}
-          >
-            <FiPlus /> Add Course
-          </Button>
-        )}
+        <Button
+          variant="primary"
+          className="bg-primary text-white"
+          onPress={() => router.push("/courses/new")}
+        >
+          <FiPlus /> Add Course
+        </Button>
       </div>
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <Card.Root key={i} className="rounded-xl">
               <Card.Content className="p-4">
                 <Skeleton className="mb-2 h-40 w-full rounded-lg" />
@@ -111,17 +96,13 @@ export default function ManageCoursesPage() {
       ) : courses.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4">
           <FiBook className="text-5xl text-default-300" />
-          <p className="text-lg text-foreground/60">
-            {isAdmin
-              ? "No courses on the platform"
-              : "You are not enrolled in any courses"}
-          </p>
+          <p className="text-lg text-foreground/60">No courses yet</p>
           <Button
             variant="primary"
             className="bg-primary text-white"
-            onPress={() => router.push(isAdmin ? "/courses/new" : "/explore")}
+            onPress={() => router.push("/courses/new")}
           >
-            {isAdmin ? "Create Your First Course" : "Explore Courses"}
+            Create Your First Course
           </Button>
         </div>
       ) : (
@@ -135,6 +116,7 @@ export default function ManageCoursesPage() {
                     alt={course.title}
                     className="h-full w-full object-cover"
                     fill
+                    loading="eager"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-3xl text-default-300">
@@ -166,29 +148,23 @@ export default function ManageCoursesPage() {
                   >
                     <FiEye /> View
                   </Button>
-                  {isAdmin && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                        onPress={() =>
-                          router.push(`/courses/${course._id}/edit`)
-                        }
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        isIconOnly
-                        aria-label="Delete course"
-                        onPress={() => setDeleteId(course._id)}
-                      >
-                        <FiTrash2 />
-                      </Button>
-                    </>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1"
+                    onPress={() => router.push(`/courses/${course._id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    isIconOnly
+                    aria-label="Delete course"
+                    onPress={() => setDeleteId(course._id)}
+                  >
+                    <FiTrash2 />
+                  </Button>
                 </div>
               </Card.Content>
             </Card.Root>

@@ -2,36 +2,59 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, fetchAndSetToken } from "@/lib/auth-client";
-import { Button, Card, TextField, Input, Label } from "@heroui/react";
+import { signIn, signUp, fetchAndSetToken } from "@/lib/auth-client";
+import { Button, Card, TextField, Input, Label, InputGroup } from "@heroui/react";
 import Link from "next/link";
-import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validate = (email: string, password: string) => {
+  const validate = (emailVal: string, passwordVal: string) => {
     const errs: Record<string, string> = {};
-    if (!email) errs.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Invalid email format";
-    if (!password) errs.password = "Password is required";
-    else if (password.length < 6) errs.password = "Password must be at least 6 characters";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    if (!emailVal) errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(emailVal)) errs.email = "Invalid email format";
+    if (!passwordVal) errs.password = "Password is required";
+    else if (passwordVal.length < 6) errs.password = "Password must be at least 6 characters";
+    return errs;
+  };
+
+  const validateField = (field: string, value: string) => {
+    const errs = validate(
+      field === "email" ? value : email,
+      field === "password" ? value : password
+    );
+    return errs[field] || "";
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const val = field === "email" ? email : password;
+    setErrors((prev) => ({ ...prev, [field]: validateField(field, val) }));
+  };
+
+  const handleChange = (field: string, value: string) => {
+    if (field === "email") setEmail(value);
+    else if (field === "password") setPassword(value);
+    if (touched[field]) {
+      setErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({});
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!validate(email, password)) return;
+    const errs = validate(email, password);
+    setErrors(errs);
+    setTouched({ email: true, password: true });
+    if (Object.keys(errs).length > 0) return;
     setLoading(true);
     try {
       const result = await signIn.email({ email, password });
@@ -53,7 +76,28 @@ export default function LoginPage() {
   const handleDemoLogin = async () => {
     setLoading(true);
     try {
-      const result = await signIn.email({ email: "demo@tutorialspoint.com", password: "demo123456" });
+      let result = await signIn.email({
+        email: "demo@gmail.com",
+        password: "demo676540",
+      });
+
+      if (result.error?.status === 404) {
+        const signUpResult = await signUp.email({
+          name: "Demo User",
+          email: "demo@gmail.com",
+          password: "demo676540",
+        });
+        if (signUpResult.error) {
+          toast.error("Demo account unavailable. Sign up first.");
+          setLoading(false);
+          return;
+        }
+        result = await signIn.email({
+          email: "demo@gmail.com",
+          password: "demo676540",
+        });
+      }
+
       if (result.error) {
         toast.error("Demo account unavailable. Sign up first.");
       } else {
@@ -71,7 +115,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <Card.Root className="w-full max-w-md">
+      <Card.Root className="w-full max-w-md rounded-xl">
         <Card.Header className="flex-col items-center gap-2 pt-8">
           <Card.Title className="text-2xl font-bold">Welcome Back</Card.Title>
           <Card.Description>Sign in to your account</Card.Description>
@@ -84,6 +128,9 @@ export default function LoginPage() {
               <Input.Root
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                onBlur={() => handleBlur("email")}
                 placeholder="you@example.com"
               />
               {errors.email && (
@@ -92,18 +139,27 @@ export default function LoginPage() {
             </TextField.Root>
             <TextField.Root isRequired isInvalid={!!errors.password}>
               <Label>Password</Label>
-              <Input.Root
-                name="password"
-                placeholder="Enter your password"
-                type={isVisible ? "text" : "password"}
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-9 text-default-400"
-                onClick={() => setIsVisible(!isVisible)}
-              >
-                {isVisible ? <FiEyeOff /> : <FiEye />}
-              </button>
+              <InputGroup>
+                <InputGroup.Input
+                  name="password"
+                  value={password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                  onBlur={() => handleBlur("password")}
+                  placeholder="Enter your password"
+                  type={isVisible ? "text" : "password"}
+                />
+                <InputGroup.Suffix className="pr-0">
+                  <Button
+                    isIconOnly
+                    aria-label={isVisible ? "Hide password" : "Show password"}
+                    size="sm"
+                    variant="ghost"
+                    onPress={() => setIsVisible(!isVisible)}
+                  >
+                    {isVisible ? <FiEyeOff className="text-default-400" /> : <FiEye className="text-default-400" />}
+                  </Button>
+                </InputGroup.Suffix>
+              </InputGroup>
               {errors.password && (
                 <p className="mt-1 text-xs text-danger">{errors.password}</p>
               )}

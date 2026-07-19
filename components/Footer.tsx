@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold">Quick Links</h3>
+            <h3 className="mb-3 font-semibold text-foreground dark:text-white">Quick Links</h3>
             <div className="flex flex-col gap-2 text-sm text-foreground/60">
               <Link href="/explore" className="hover:text-foreground">Explore</Link>
               <Link href="/courses/manage" className="hover:text-foreground">My Classes</Link>
@@ -27,7 +27,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold">Help & Support</h3>
+            <h3 className="mb-3 font-semibold text-foreground dark:text-white">Help & Support</h3>
             <div className="flex flex-col gap-2 text-sm text-foreground/60">
               <Link href="/help" className="hover:text-foreground">FAQ</Link>
               <Link href="/contact" className="hover:text-foreground">Contact Us</Link>
@@ -37,7 +37,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold">Connect</h3>
+            <h3 className="mb-3 font-semibold text-foreground dark:text-white">Connect</h3>
             <div className="flex gap-3">
               <a href="mailto:hello@tutorialspoint.com" className="text-foreground/60 hover:text-foreground">
                 <FiMail className="text-xl" />

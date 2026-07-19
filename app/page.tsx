@@ -152,7 +152,7 @@ export default function LandingPage() {
       <section className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 px-4">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
         <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground dark:text-white sm:text-5xl lg:text-6xl">
             Learn Anything with{" "}
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               AI-Powered
@@ -187,7 +187,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold">Why Choose TutorialsPoint?</h2>
+          <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">Why Choose TutorialsPoint?</h2>
           <p className="mx-auto max-w-2xl text-foreground/60">
             Our platform combines the power of AI with expert knowledge to
             deliver an unmatched learning experience.
@@ -195,12 +195,12 @@ export default function LandingPage() {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f, i) => (
-            <Card.Root key={i} className="group transition-shadow hover:shadow-lg">
+            <Card.Root key={i} className="group rounded-xl transition-shadow hover:shadow-lg">
               <Card.Content className="flex flex-col items-center p-6 text-center">
                 <div className="mb-4 rounded-full bg-primary/10 p-3 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                   <f.icon className="text-2xl" />
                 </div>
-                <Card.Title className="mb-2 text-lg">{f.title}</Card.Title>
+                <Card.Title className="mb-2 text-lg text-foreground dark:text-white">{f.title}</Card.Title>
                 <Card.Description className="text-sm text-foreground/60">
                   {f.description}
                 </Card.Description>
@@ -214,7 +214,7 @@ export default function LandingPage() {
       <section className="bg-default-50 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">Top Categories</h2>
+            <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">Top Categories</h2>
             <p className="mx-auto max-w-2xl text-foreground/60">
               Explore courses across popular categories
             </p>
@@ -222,7 +222,7 @@ export default function LandingPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {catData?.categories?.length
               ? catData.categories.map((cat, i) => (
-                  <Card.Root key={cat} className="transition-shadow hover:shadow-lg">
+                  <Card.Root key={cat} className="rounded-xl transition-shadow hover:shadow-lg">
                     <button
                       className="w-full text-left"
                       onClick={() => router.push(`/explore?category=${cat}`)}
@@ -241,7 +241,7 @@ export default function LandingPage() {
                   </Card.Root>
                 ))
               : Array.from({ length: 6 }).map((_, i) => (
-                  <Card.Root key={i}>
+                  <Card.Root key={i} className="rounded-xl">
                     <Card.Content className="p-4">
                       <Skeleton className="h-5 w-32" />
                     </Card.Content>
@@ -254,7 +254,7 @@ export default function LandingPage() {
       {/* Featured Courses Section */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold">Latest Courses</h2>
+          <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">Latest Courses</h2>
           <p className="mx-auto max-w-2xl text-foreground/60">
             Discover our most recent courses
           </p>
@@ -262,7 +262,7 @@ export default function LandingPage() {
         {featuredLoading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card.Root key={i} className="overflow-hidden">
+              <Card.Root key={i} className="overflow-hidden rounded-xl">
                 <Skeleton className="aspect-video w-full" />
                 <Card.Content className="p-4">
                   <Skeleton className="mb-2 h-5 w-3/4" />
@@ -297,15 +297,15 @@ export default function LandingPage() {
       <section className="bg-default-50 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">Platform at a Glance</h2>
+            <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">Platform at a Glance</h2>
             <p className="mx-auto max-w-2xl text-foreground/60">
               Track the growth of our AI-powered learning community
             </p>
           </div>
           <div className="grid gap-8 lg:grid-cols-2">
-            <Card.Root>
+            <Card.Root className="rounded-xl">
               <Card.Content className="p-6">
-                <Card.Title className="mb-4">Active Learners & AI Courses</Card.Title>
+                <Card.Title className="mb-4 text-foreground dark:text-white">Active Learners & AI Courses</Card.Title>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
@@ -329,14 +329,14 @@ export default function LandingPage() {
                       <Line
                         type="monotone"
                         dataKey="learners"
-                        stroke="#6366f1"
+                        stroke="var(--color-primary)"
                         strokeWidth={2}
                         name="Active Learners"
                       />
                       <Line
                         type="monotone"
                         dataKey="aiCourses"
-                        stroke="#8b5cf6"
+                        stroke="var(--color-secondary)"
                         strokeWidth={2}
                         name="AI Courses"
                       />
@@ -346,32 +346,32 @@ export default function LandingPage() {
               </Card.Content>
             </Card.Root>
             <div className="grid grid-cols-2 gap-4">
-              <Card.Root>
+              <Card.Root className="rounded-xl">
                 <Card.Content className="flex flex-col items-center p-6 text-center">
                   <FiUsers className="mb-2 text-2xl text-primary" />
-                  <p className="text-2xl font-bold">{totalCourses * 2500}+</p>
-                  <p className="text-xs text-foreground/60">Active Learners</p>
+                  <p className="text-2xl font-bold text-foreground dark:text-white">{totalCourses * 2500}+</p>
+                  <p className="text-xs text-foreground/60 dark:text-muted">Active Learners</p>
                 </Card.Content>
               </Card.Root>
-              <Card.Root>
+              <Card.Root className="rounded-xl">
                 <Card.Content className="flex flex-col items-center p-6 text-center">
                   <FiCpu className="mb-2 text-2xl text-secondary" />
-                  <p className="text-2xl font-bold">{totalCourses}+</p>
-                  <p className="text-xs text-foreground/60">Courses Available</p>
+                  <p className="text-2xl font-bold text-foreground dark:text-white">{totalCourses}+</p>
+                  <p className="text-xs text-foreground/60 dark:text-muted">Courses Available</p>
                 </Card.Content>
               </Card.Root>
-              <Card.Root>
+              <Card.Root className="rounded-xl">
                 <Card.Content className="flex flex-col items-center p-6 text-center">
                   <FiStar className="mb-2 text-2xl text-primary" />
-                  <p className="text-2xl font-bold">95%</p>
-                  <p className="text-xs text-foreground/60">Satisfaction Rate</p>
+                  <p className="text-2xl font-bold text-foreground dark:text-white">95%</p>
+                  <p className="text-xs text-foreground/60 dark:text-muted">Satisfaction Rate</p>
                 </Card.Content>
               </Card.Root>
-              <Card.Root>
+              <Card.Root className="rounded-xl">
                 <Card.Content className="flex flex-col items-center p-6 text-center">
                   <FiBarChart2 className="mb-2 text-2xl text-secondary" />
-                  <p className="text-2xl font-bold">50K+</p>
-                  <p className="text-xs text-foreground/60">Lessons Completed</p>
+                  <p className="text-2xl font-bold text-foreground dark:text-white">50K+</p>
+                  <p className="text-xs text-foreground/60 dark:text-muted">Lessons Completed</p>
                 </Card.Content>
               </Card.Root>
             </div>
@@ -382,14 +382,14 @@ export default function LandingPage() {
       {/* Testimonials Section */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold">What Our Users Say</h2>
+          <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">What Our Users Say</h2>
           <p className="mx-auto max-w-2xl text-foreground/60">
             Hear from our community of learners and instructors
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((t, i) => (
-            <Card.Root key={i} className="transition-shadow hover:shadow-lg">
+            <Card.Root key={i} className="rounded-xl transition-shadow hover:shadow-lg">
               <Card.Content className="p-6">
                 <div className="mb-3 flex gap-1 text-amber-400">
                   {Array.from({ length: 5 }).map((_, j) => (
@@ -418,7 +418,7 @@ export default function LandingPage() {
       <section className="bg-default-50 py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">Frequently Asked Questions</h2>
+            <h2 className="mb-3 text-3xl font-bold text-foreground dark:text-white">Frequently Asked Questions</h2>
             <p className="mx-auto max-w-2xl text-foreground/60">
               Everything you need to know about TutorialsPoint
             </p>
@@ -440,7 +440,7 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <Card.Root className="bg-gradient-to-br from-primary to-secondary text-white">
+        <Card.Root className="rounded-xl bg-gradient-to-br from-primary to-secondary text-white">
           <Card.Content className="flex flex-col items-center gap-6 p-12 text-center">
             <Card.Title className="text-3xl font-bold">
               Ready to Start Learning?

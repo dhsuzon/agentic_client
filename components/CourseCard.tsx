@@ -11,7 +11,7 @@ interface CourseCardProps {
 
 export default function CourseCard({ course }: CourseCardProps) {
   return (
-    <Card.Root className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
+    <Card.Root className="group h-full overflow-hidden rounded-xl transition-shadow hover:shadow-lg">
       <div className="relative aspect-video overflow-hidden bg-default-100">
         {course.image ? (
           <img
@@ -55,7 +55,7 @@ export default function CourseCard({ course }: CourseCardProps) {
 
 export function CourseCardSkeleton() {
   return (
-    <Card.Root className="overflow-hidden">
+    <Card.Root className="overflow-hidden rounded-xl">
       <Skeleton className="aspect-video w-full" />
       <Card.Content className="p-4">
         <Skeleton className="mb-2 h-5 w-3/4" />

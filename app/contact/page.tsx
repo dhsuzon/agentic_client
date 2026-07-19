@@ -25,7 +25,7 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12">
       <div className="mb-12 text-center">
-        <h1 className="mb-3 text-4xl font-bold">Contact Us</h1>
+        <h1 className="mb-3 text-4xl font-bold text-foreground dark:text-white">Contact Us</h1>
         <p className="mx-auto max-w-2xl text-foreground/60">
           Have a question or feedback? We would love to hear from you.
         </p>
@@ -33,7 +33,7 @@ export default function ContactPage() {
 
       <div className="mb-12 grid gap-6 sm:grid-cols-3">
         {channels.map((ch) => (
-          <Card.Root key={ch.title}>
+          <Card.Root key={ch.title} className="rounded-xl">
             <Card.Content className="flex flex-col items-center gap-2 py-8 text-center">
               <ch.icon className="text-2xl text-primary" />
               <p className="font-semibold">{ch.title}</p>
@@ -49,7 +49,7 @@ export default function ContactPage() {
         ))}
       </div>
 
-      <Card.Root className="mx-auto max-w-2xl">
+      <Card.Root className="mx-auto max-w-2xl rounded-xl">
         <Card.Header>
           <Card.Title>Send us a message</Card.Title>
         </Card.Header>

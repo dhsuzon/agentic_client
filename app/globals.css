@@ -29,14 +29,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
-    --color-default-50: #18181b;
-    --color-default-100: #27272a;
-    --color-default-200: #3f3f46;
-    --color-default-300: #52525b;
-    --color-default-400: #71717a;
-  }
+html.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #e4e4e7;
+  --color-muted: oklch(63.2% 0 0);
+  --color-default-50: #18181b;
+  --color-default-100: #27272a;
+  --color-default-200: #3f3f46;
+  --color-default-300: #a1a1aa;
+  --color-default-400: #d4d4d8;
 }

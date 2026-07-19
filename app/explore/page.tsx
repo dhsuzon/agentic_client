@@ -38,7 +38,8 @@ export default function ExplorePage() {
     setPage(1);
   }, [search, category, minPrice, maxPrice, sort]);
 
-  const hasFilters = search || category || minPrice || maxPrice || sort !== "newest";
+  const hasFilters =
+    search || category || minPrice || maxPrice || sort !== "newest";
 
   const clearFilters = () => {
     setSearch("");
@@ -52,14 +53,16 @@ export default function ExplorePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Explore Courses</h1>
-        <p className="mt-1 text-foreground/60">
+        <h1 className="text-3xl font-bold text-foreground dark:text-white">
+          Explore Courses
+        </h1>
+        <p className="mt-1 text-foreground/60 dark:text-muted">
           Discover courses powered by AI
         </p>
       </div>
 
       <div className="mb-6 flex flex-wrap items-end gap-3">
-        <div className="relative min-w-[200px] flex-1">
+        <div className="relative min-w-50 flex-1">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-default-400" />
           <input
             placeholder="Search courses..."

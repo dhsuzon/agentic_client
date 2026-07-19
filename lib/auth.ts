@@ -10,6 +10,16 @@ export function getAuth() {
   const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
   const client = new MongoClient(MONGODB_URL);
   return betterAuth({
+    user: {
+      additionalFields: {
+        role: {
+          type: "string",
+          defaultValue: "user",
+          required: false,
+          input: false,
+        },
+      },
+    },
     database: mongodbAdapter(client.db("tutorialpoints")),
     emailAndPassword: {
       enabled: true,

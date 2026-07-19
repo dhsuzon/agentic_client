@@ -2,47 +2,70 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signUp, fetchAndSetToken } from "@/lib/auth-client";
-import { Button, Card, TextField, Input, Label } from "@heroui/react";
+import { signUp } from "@/lib/auth-client";
+import { Button, Card, TextField, Input, Label, InputGroup } from "@heroui/react";
 import Link from "next/link";
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validate = (name: string, email: string, password: string) => {
+  const validate = (nameVal: string, emailVal: string, passwordVal: string) => {
     const errs: Record<string, string> = {};
-    if (!name.trim()) errs.name = "Name is required";
-    if (!email) errs.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Invalid email format";
-    if (!password) errs.password = "Password is required";
-    else if (password.length < 6) errs.password = "Password must be at least 6 characters";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    if (!nameVal.trim()) errs.name = "Name is required";
+    if (!emailVal) errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(emailVal)) errs.email = "Invalid email format";
+    if (!passwordVal) errs.password = "Password is required";
+    else if (passwordVal.length < 6) errs.password = "Password must be at least 6 characters";
+    return errs;
+  };
+
+  const validateField = (field: string, value: string) => {
+    const errs = validate(
+      field === "name" ? value : name,
+      field === "email" ? value : email,
+      field === "password" ? value : password
+    );
+    return errs[field] || "";
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const val = field === "name" ? name : field === "email" ? email : password;
+    setErrors((prev) => ({ ...prev, [field]: validateField(field, val) }));
+  };
+
+  const handleChange = (field: string, value: string) => {
+    if (field === "name") setName(value);
+    else if (field === "email") setEmail(value);
+    else if (field === "password") setPassword(value);
+    if (touched[field]) {
+      setErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({});
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!validate(name, email, password)) return;
+    const errs = validate(name, email, password);
+    setErrors(errs);
+    setTouched({ name: true, email: true, password: true });
+    if (Object.keys(errs).length > 0) return;
     setLoading(true);
     try {
       const result = await signUp.email({ name, email, password });
       if (result.error) {
         toast.error(result.error.message || "Registration failed");
       } else {
-        await fetchAndSetToken();
-        toast.success("Account created! Welcome!");
-        router.push("/");
-        router.refresh();
+        toast.success("Account created! Please sign in.");
+        router.push("/login");
       }
     } catch {
       toast.error("Something went wrong");
@@ -53,7 +76,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <Card.Root className="w-full max-w-md">
+      <Card.Root className="w-full max-w-md rounded-xl">
         <Card.Header className="flex-col items-center gap-2 pt-8">
           <Card.Title className="text-2xl font-bold">Create Account</Card.Title>
           <Card.Description>Start your learning journey</Card.Description>
@@ -63,7 +86,13 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <TextField.Root isRequired isInvalid={!!errors.name}>
               <Label>Full Name</Label>
-              <Input.Root name="name" placeholder="John Doe" />
+              <Input.Root
+                name="name"
+                value={name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                onBlur={() => handleBlur("name")}
+                placeholder="John Doe"
+              />
               {errors.name && (
                 <p className="mt-1 text-xs text-danger">{errors.name}</p>
               )}
@@ -73,6 +102,9 @@ export default function RegisterPage() {
               <Input.Root
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                onBlur={() => handleBlur("email")}
                 placeholder="you@example.com"
               />
               {errors.email && (
@@ -81,18 +113,27 @@ export default function RegisterPage() {
             </TextField.Root>
             <TextField.Root isRequired isInvalid={!!errors.password}>
               <Label>Password</Label>
-              <Input.Root
-                name="password"
-                placeholder="Create a password"
-                type={isVisible ? "text" : "password"}
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-9 text-default-400"
-                onClick={() => setIsVisible(!isVisible)}
-              >
-                {isVisible ? <FiEyeOff /> : <FiEye />}
-              </button>
+              <InputGroup>
+                <InputGroup.Input
+                  name="password"
+                  value={password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                  onBlur={() => handleBlur("password")}
+                  placeholder="Create a password"
+                  type={isVisible ? "text" : "password"}
+                />
+                <InputGroup.Suffix className="pr-0">
+                  <Button
+                    isIconOnly
+                    aria-label={isVisible ? "Hide password" : "Show password"}
+                    size="sm"
+                    variant="ghost"
+                    onPress={() => setIsVisible(!isVisible)}
+                  >
+                    {isVisible ? <FiEyeOff className="text-default-400" /> : <FiEye className="text-default-400" />}
+                  </Button>
+                </InputGroup.Suffix>
+              </InputGroup>
               {errors.password && (
                 <p className="mt-1 text-xs text-danger">{errors.password}</p>
               )}
