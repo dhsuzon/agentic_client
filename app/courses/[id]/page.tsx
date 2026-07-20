@@ -160,6 +160,7 @@ export default function CourseDetailPage() {
                 className="h-full w-full object-cover"
                 fill
                 sizes="(max-width: 768px) 100vw, 768px"
+                loading="eager"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-6xl text-default-300">
