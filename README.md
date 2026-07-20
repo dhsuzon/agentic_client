@@ -6,6 +6,9 @@ A modern, AI-powered learning platform frontend built with Next.js 16, React 19,
 
 TutorialsPoint Frontend is the client-side application for an AI-powered learning platform. It provides an intuitive interface for course discovery, creation, enrollment, and AI-assisted content generation using Google's Gemini AI.
 
+## Live Site Link
+[https://agentic-client.vercel.app](https://agentic-client.vercel.app)
+
 ## ✨ Key Features
 
 ### 🤖 AI-Powered Course Creation
