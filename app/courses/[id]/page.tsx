@@ -284,40 +284,52 @@ export default function CourseDetailPage() {
         </div>
 
         <div>
-          {session && (
-            <Card.Root className="sticky top-24 rounded-xl border border-success/20 bg-success/5">
-              <Card.Content className="p-4">
-                <div className="flex items-center gap-3">
-                  <FiBookOpen className="text-xl text-success" />
-                  <div>
-                    <p className="text-sm font-semibold">
-                      {isEnrolled ? "You are enrolled" : "Not enrolled"}
-                    </p>
-                    <p className="text-xs text-foreground/50 dark:text-muted">
-                      {isEnrolled
+          <Card.Root className="sticky top-24 rounded-xl border border-success/20 bg-success/5">
+            <Card.Content className="p-4">
+              <div className="flex items-center gap-3">
+                <FiBookOpen className="text-xl text-success" />
+                <div>
+                  <p className="text-sm font-semibold">
+                    {!session
+                      ? "Sign in to enroll"
+                      : isEnrolled
+                        ? "You are enrolled"
+                        : "Not enrolled"}
+                  </p>
+                  <p className="text-xs text-foreground/50 dark:text-muted">
+                    {!session
+                      ? "Sign in to get started"
+                      : isEnrolled
                         ? "You have access to this course"
                         : "Enroll to get started"}
-                    </p>
-                  </div>
+                  </p>
                 </div>
-                <Button
-                  variant={isEnrolled ? "danger" : "primary"}
-                  className="mt-3 w-full"
-                  isDisabled={
-                    enrollMutation.isPending ||
-                    unenrollMutation.isPending
+              </div>
+              <Button
+                variant={isEnrolled ? "danger" : "primary"}
+                className="mt-3 w-full"
+                isDisabled={
+                  enrollMutation.isPending ||
+                  unenrollMutation.isPending
+                }
+                onPress={() => {
+                  if (!session) {
+                    router.push("/login");
+                  } else if (isEnrolled) {
+                    unenrollMutation.mutate();
+                  } else {
+                    enrollMutation.mutate();
                   }
-                  onPress={() =>
-                    isEnrolled
-                      ? unenrollMutation.mutate()
-                      : enrollMutation.mutate()
-                  }
-                >
-                  {isEnrolled ? "Unenroll" : "Enroll Now"}
-                </Button>
-              </Card.Content>
-            </Card.Root>
-          )}
+                }}
+              >
+                {!session
+                  ? "Enroll Now"
+                  : isEnrolled
+                    ? "Unenroll"
+                    : "Enroll Now"}
+              </Button>
+            </Card.Content>
+          </Card.Root>
           <Card.Root className="sticky top-24 mt-4 rounded-xl">
             <Card.Header>
               <Card.Title>Course Info</Card.Title>
