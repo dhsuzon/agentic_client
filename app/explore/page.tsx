@@ -6,8 +6,11 @@ import { Button } from "@heroui/react";
 import { FiSearch, FiX } from "react-icons/fi";
 import CourseCard, { CourseCardSkeleton } from "@/components/CourseCard";
 import { getCourses, getCategories, CoursesResponse } from "@/lib/api";
+import { useSession } from "@/lib/auth-client";
 
 export default function ExplorePage() {
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -141,18 +144,16 @@ export default function ExplorePage() {
 
       {!isLoading && data?.courses?.length === 0 && (
         <div className="py-16 text-center text-foreground/60">
-          <p className="text-lg">
-            {hasFilters ? "No courses match your filters" : "No courses found"}
-          </p>
-          <p>
-            {hasFilters
-              ? "Try adjusting your search or filters"
-              : "Be the first to create a course!"}
-          </p>
+          <p className="text-lg">No courses found</p>
+          <p>{isAdmin ? "Be the first to create a course!" : "No courses available yet"}</p>
           {hasFilters && (
-            <Button variant="ghost" onPress={clearFilters} className="mt-4">
-              <FiX className="mr-1" /> Clear Filters
-            </Button>
+            <>
+              <p className="mt-4 text-lg">No courses match your filters</p>
+              <p>Try adjusting your search or filters</p>
+              <Button variant="ghost" onPress={clearFilters} className="mt-4">
+                <FiX className="mr-1" /> Clear Filters
+              </Button>
+            </>
           )}
         </div>
       )}

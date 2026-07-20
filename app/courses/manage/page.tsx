@@ -135,6 +135,7 @@ export default function ManageCoursesPage() {
                     alt={course.title}
                     className="h-full w-full object-cover"
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-3xl text-default-300">

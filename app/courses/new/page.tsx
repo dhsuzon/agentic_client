@@ -9,7 +9,7 @@ import { createCourse } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
 
 const AI_GENERATE_PROMPT = `Generate a detailed course syllabus and description for the topic: "{topic}".
-Format as JSON with keys: title, description, syllabus (array of weekly topics).`;
+Format as JSON with keys: title, description, syllabus: array of topic name strings, e.g. ["Introduction to X", "Core Concepts", "Advanced Topics"].`;
 
 const AI_CLASSIFY_PROMPT = `Analyze this course and classify it.
 Title: "{title}"
@@ -17,7 +17,7 @@ Description: "{description}"
 
 Respond ONLY with JSON:
 {
-  "category": "one of: Development, Design, AI & Machine Learning, Data Science, Business, Marketing, Other",
+  "category": "one of: Web Development, Mobile Development, Data Science, Machine Learning, DSA & Algorithms, DevOps, Cybersecurity, Cloud Computing, UI/UX Design, Game Development, Programming, Android",
   "tags": ["3-5 relevant keyword tags"],
   "difficulty": "beginner | intermediate | advanced"
 }`;
@@ -63,6 +63,14 @@ export default function AddCoursePage() {
     return JSON.parse(jsonMatch ? jsonMatch[0] : text);
   };
 
+  const formatSyllabus = (syllabus: any): string => {
+    if (!Array.isArray(syllabus)) return String(syllabus);
+    return syllabus.map((item: any) => {
+      if (typeof item === "string") return item;
+      return item.topic || item.title || item.name || item.week || JSON.stringify(item);
+    }).join("\n");
+  };
+
   const handleGenerate = async () => {
     setGenLoading(true);
     try {
@@ -88,7 +96,7 @@ export default function AddCoursePage() {
       if (parsed.syllabus) {
         (document.getElementById("syllabus") as HTMLTextAreaElement).value =
           Array.isArray(parsed.syllabus)
-            ? parsed.syllabus.join("\n")
+            ? formatSyllabus(parsed.syllabus)
             : parsed.syllabus;
       }
       toast.success("Content generated!");
