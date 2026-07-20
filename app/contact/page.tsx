@@ -5,10 +5,12 @@ import { Button, Card, TextField, Input, Label } from "@heroui/react";
 import { FiMail, FiMapPin, FiPhone, FiSend } from "react-icons/fi";
 import { toast } from "react-toastify";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
 const channels = [
-  { icon: FiMail, title: "Email", desc: "support@tutorialspoint.com", href: "mailto:support@tutorialspoint.com" },
-  { icon: FiPhone, title: "Phone", desc: "+1 (555) 123-4567", href: "tel:+15551234567" },
-  { icon: FiMapPin, title: "Office", desc: "123 Learning St, San Francisco, CA" },
+  { icon: FiMail, title: "Email", desc: "diderhossainsuzon@gmail.com", href: "mailto:diderhossainsuzon@gmail.com" },
+  { icon: FiPhone, title: "Phone", desc: "01871601665", href: "tel:01871601665" },
+  { icon: FiMapPin, title: "Office", desc: "Jalalabad" },
 ];
 
 export default function ContactPage() {
@@ -17,9 +19,27 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    toast.success("Message sent! We'll get back to you soon.");
-    setSending(false);
+    const form = e.currentTarget as HTMLFormElement;
+    const data = new FormData(form);
+    try {
+      const res = await fetch(`${API_URL}/api/contacts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          subject: data.get("subject"),
+          message: data.get("message"),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      toast.success("Message sent! We'll get back to you soon.");
+      form.reset();
+    } catch {
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

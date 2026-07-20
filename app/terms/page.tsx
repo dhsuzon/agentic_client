@@ -1,4 +1,9 @@
-"use client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service - TutorialsPoint",
+  description: "Read the terms and conditions for using TutorialsPoint's AI-powered learning platform.",
+};
 
 export default function TermsPage() {
   return (

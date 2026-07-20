@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiBook, FiMail, FiGithub, FiTwitter, FiLinkedin } from "react-icons/fi";
+import { FiBook, FiMail, FiGithub, FiTwitter, FiLinkedin, FiPhone, FiMapPin } from "react-icons/fi";
 
 export default function Footer() {
   return (
@@ -36,26 +36,31 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground dark:text-white">Connect</h3>
-            <div className="flex gap-3">
-              <a href="mailto:hello@tutorialspoint.com" className="text-foreground/60 hover:text-foreground">
-                <FiMail className="text-xl" />
-              </a>
-              <a href="#" className="text-foreground/60 hover:text-foreground">
-                <FiGithub className="text-xl" />
-              </a>
-              <a href="#" className="text-foreground/60 hover:text-foreground">
-                <FiTwitter className="text-xl" />
-              </a>
-              <a href="#" className="text-foreground/60 hover:text-foreground">
-                <FiLinkedin className="text-xl" />
-              </a>
+            <div>
+              <h3 className="mb-3 font-semibold text-foreground dark:text-white">Connect</h3>
+              <div className="flex flex-col gap-2 text-sm text-foreground/60">
+                <a href="mailto:diderhossainsuzon@gmail.com" className="flex items-center gap-2 hover:text-foreground">
+                  <FiMail /> diderhossainsuzon@gmail.com
+                </a>
+                <a href="tel:01871601665" className="flex items-center gap-2 hover:text-foreground">
+                  <FiPhone /> 01871601665
+                </a>
+                <span className="flex items-center gap-2">
+                  <FiMapPin /> Jalalabad
+                </span>
+              </div>
+              <div className="mt-3 flex gap-3">
+                <a href="https://github.com/dhsuzon" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-foreground">
+                  <FiGithub className="text-xl" />
+                </a>
+                <a href="#" className="text-foreground/60 hover:text-foreground">
+                  <FiTwitter className="text-xl" />
+                </a>
+                <a href="https://www.linkedin.com/in/dider-hossain-suzon" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-foreground">
+                  <FiLinkedin className="text-xl" />
+                </a>
+              </div>
             </div>
-            <p className="mt-4 text-sm text-foreground/60">
-              Subscribe to our newsletter for updates.
-            </p>
-          </div>
         </div>
 
         <div className="mt-8 border-t border-default-200 pt-6 text-center text-sm text-foreground/40">

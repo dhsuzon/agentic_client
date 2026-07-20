@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Card, Skeleton, Chip } from "@heroui/react";
@@ -20,10 +21,13 @@ import {
   getMyEnrollments,
   unenrollCourse,
   getReviewsByCourse,
+  createReview,
+  deleteReview,
 } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
 import CourseCard from "@/components/CourseCard";
 import ReviewCard from "@/components/ReviewCard";
+import StarRating from "@/components/StarRating";
 import Image from "next/image";
 
 export default function CourseDetailPage() {
@@ -52,6 +56,9 @@ export default function CourseDetailPage() {
   
   const queryClient = useQueryClient();
 
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+
   const enrollMutation = useMutation({
     mutationFn: () => enrollCourse(id),
     onSuccess: () => {
@@ -68,6 +75,27 @@ export default function CourseDetailPage() {
       toast.success("Unenrolled");
     },
     onError: (err: any) => toast.error(err.message || "Failed to unenroll"),
+  });
+
+  const createReviewMutation = useMutation({
+    mutationFn: (data: { rating: number; comment: string }) =>
+      createReview(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", id] });
+      setReviewRating(0);
+      setReviewComment("");
+      toast.success("Review submitted!");
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to submit review"),
+  });
+
+  const deleteReviewMutation = useMutation({
+    mutationFn: deleteReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", id] });
+      toast.success("Review deleted");
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to delete review"),
   });
 
   const { data: related } = useQuery({
@@ -205,13 +233,51 @@ export default function CourseDetailPage() {
               {reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map((review: any) => (
-                    <ReviewCard key={review._id} review={review} />
+                    <ReviewCard
+                      key={review._id}
+                      review={review}
+                      currentUserId={session?.user?.id}
+                      onDelete={(id) => deleteReviewMutation.mutate(id)}
+                    />
                   ))}
                 </div>
               ) : (
                 <p className="text-center text-foreground/60 py-4">
                   No reviews yet. Be the first to review!
                 </p>
+              )}
+
+              {session && isEnrolled && (
+                <div className="mt-6 border-t border-default-200 pt-6">
+                  <p className="mb-3 text-sm font-semibold">Write a Review</p>
+                  <div className="mb-3">
+                    <StarRating
+                      rating={reviewRating}
+                      interactive
+                      size="lg"
+                      onChange={setReviewRating}
+                    />
+                  </div>
+                  <textarea
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    rows={3}
+                    placeholder="Share your thoughts about this course..."
+                    className="mb-3 w-full rounded-lg border border-default-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-primary"
+                  />
+                  <Button
+                    variant="primary"
+                    isDisabled={!reviewRating || createReviewMutation.isPending}
+                    onPress={() =>
+                      createReviewMutation.mutate({
+                        rating: reviewRating,
+                        comment: reviewComment,
+                      })
+                    }
+                  >
+                    Submit Review
+                  </Button>
+                </div>
               )}
             </Card.Content>
           </Card.Root>

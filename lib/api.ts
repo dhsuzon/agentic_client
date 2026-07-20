@@ -118,6 +118,22 @@ export function getReviewsByCourse(courseId: string) {
   );
 }
 
+export function createReview(
+  courseId: string,
+  data: { rating: number; comment: string },
+) {
+  return api<{ review: any }>(`/api/reviews/${courseId}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteReview(id: string) {
+  return api<{ message: string }>(`/api/reviews/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export function uploadToImgBB(file: File): Promise<{ url: string }> {
   const formData = new FormData();
   formData.append("image", file);

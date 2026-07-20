@@ -204,17 +204,22 @@ export default function AddCoursePage() {
   }
 
   const categoriesList = [
-    "Development",
-    "Design",
-    "AI & Machine Learning",
+    "Web Development",
+    "Mobile Development",
     "Data Science",
-    "Business",
-    "Marketing",
-    "Other",
+    "Machine Learning",
+    "DSA & Algorithms",
+    "DevOps",
+    "Cybersecurity",
+    "Cloud Computing",
+    "UI/UX Design",
+    "Game Development",
+    "Programming",
+    "Android",
   ];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Add New Course</h1>
         <p className="mt-1 text-foreground/60">
@@ -222,194 +227,210 @@ export default function AddCoursePage() {
         </p>
       </div>
 
-      <Card.Root className="mb-6 border border-primary/20 bg-primary/5">
-        <Card.Content className="flex flex-col gap-4 p-4">
-          <p className="flex items-center gap-2 text-sm font-medium">
-            <FiZap className="text-primary" /> AI Content Generator
-          </p>
-          <div className="flex gap-2">
-            <TextField.Root className="flex-1">
-              <Input.Root
-                id="topicInput"
-                placeholder="Enter a topic (e.g., React for Beginners)"
-              />
-            </TextField.Root>
-            <Button
-              variant="secondary"
-              isDisabled={genLoading}
-              onPress={handleGenerate}
-            >
-              {genLoading ? (
-                <FiRefreshCw className="animate-spin" />
-              ) : (
-                <FiZap />
-              )}
-              Generate
-            </Button>
-          </div>
-          <div className="border-t border-primary/10 pt-3">
-            <p className="mb-2 flex items-center gap-2 text-xs text-foreground/60">
-              <FiTag /> Auto Classification — suggest category & tags from title
-              + description
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              isDisabled={classifyLoading}
-              onPress={handleClassify}
-            >
-              {classifyLoading ? (
-                <FiRefreshCw className="animate-spin" />
-              ) : (
-                <FiTag />
-              )}
-              Classify
-            </Button>
-          </div>
-        </Card.Content>
-      </Card.Root>
-
-      <Card.Root>
-        <Card.Header>
-          <Card.Title>Course Details</Card.Title>
-        </Card.Header>
-        <Card.Content>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <TextField.Root isRequired>
-              <Label>Course Title</Label>
-              <Input.Root
-                id="title"
-                name="title"
-                placeholder="Enter course title"
-              />
-            </TextField.Root>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-foreground/70">
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                required
-                rows={4}
-                placeholder="Describe your course"
-                className="w-full rounded-lg border border-default-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-foreground/70">
-                Category
-              </label>
-              <select
-                name="category"
-                required
-                className="h-10 w-full rounded-lg border border-default-200 bg-background px-3 text-sm outline-none focus:border-primary"
-              >
-                <option value="">Select category</option>
-                {categoriesList.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <TextField.Root>
-              <Label>Price ($)</Label>
-              <Input.Root name="price" type="number" placeholder="0 for free" />
-            </TextField.Root>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-foreground/70">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+      <form id="createCourseForm" onSubmit={handleSubmit}>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Left Column: AI Generator + Description + Syllabus */}
+          <div className="space-y-6">
+            <Card.Root className="border border-primary/20 bg-primary/5">
+              <Card.Content className="flex flex-col gap-4 p-4">
+                <p className="flex items-center gap-2 text-sm font-medium">
+                  <FiZap className="text-primary" /> AI Content Generator
+                </p>
+                <div className="flex gap-2">
+                  <TextField.Root className="flex-1">
+                    <Input.Root
+                      id="topicInput"
+                      placeholder="Enter a topic (e.g., React for Beginners)"
+                    />
+                  </TextField.Root>
+                  <Button
+                    variant="secondary"
+                    isDisabled={genLoading}
+                    onPress={handleGenerate}
+                    type="button"
                   >
-                    {tag}
-                    <button onClick={() => removeTag(tag)}>
-                      <FiX className="text-xs" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <TextField.Root className="flex-1">
+                    {genLoading ? (
+                      <FiRefreshCw className="animate-spin" />
+                    ) : (
+                      <FiZap />
+                    )}
+                    Generate
+                  </Button>
+                </div>
+                <div className="border-t border-primary/10 pt-3">
+                  <p className="mb-2 flex items-center gap-2 text-xs text-foreground/60">
+                    <FiTag /> Auto Classification — suggest category & tags
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    isDisabled={classifyLoading}
+                    onPress={handleClassify}
+                    type="button"
+                  >
+                    {classifyLoading ? (
+                      <FiRefreshCw className="animate-spin" />
+                    ) : (
+                      <FiTag />
+                    )}
+                    Classify
+                  </Button>
+                </div>
+              </Card.Content>
+            </Card.Root>
+
+            <Card.Root>
+              <Card.Header>
+                <Card.Title>Course Content</Card.Title>
+              </Card.Header>
+              <Card.Content className="flex flex-col gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-foreground/70">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    required
+                    rows={6}
+                    placeholder="Describe your course..."
+                    className="w-full rounded-lg border border-default-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-foreground/70">
+                    Syllabus
+                  </label>
+                  <textarea
+                    id="syllabus"
+                    name="syllabus"
+                    rows={10}
+                    placeholder="Enter course syllabus (one topic per line)"
+                    className="w-full rounded-lg border border-default-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-primary"
+                  />
+                </div>
+              </Card.Content>
+            </Card.Root>
+          </div>
+
+          {/* Right Column: Title, Category, Price, Tags, Image, Submit */}
+          <div className="space-y-6">
+            <Card.Root>
+              <Card.Header>
+                <Card.Title>Course Details</Card.Title>
+              </Card.Header>
+              <Card.Content className="flex flex-col gap-4">
+                <TextField.Root isRequired>
+                  <Label>Course Title</Label>
                   <Input.Root
-                    placeholder="Add a tag"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addTag();
-                      }
-                    }}
+                    id="title"
+                    name="title"
+                    placeholder="Enter course title"
                   />
                 </TextField.Root>
-                <Button variant="ghost" size="sm" onPress={addTag}>
-                  Add
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-foreground/70">
+                    Category
+                  </label>
+                  <select
+                    name="category"
+                    required
+                    className="h-10 w-full rounded-lg border border-default-200 bg-background px-3 text-sm outline-none focus:border-primary"
+                  >
+                    <option value="">Select category</option>
+                    {categoriesList.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <TextField.Root>
+                  <Label>Price ($)</Label>
+                  <Input.Root name="price" type="number" placeholder="0 for free" />
+                </TextField.Root>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-foreground/70">
+                    Tags
+                  </label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                      >
+                        {tag}
+                        <button onClick={() => removeTag(tag)}>
+                          <FiX className="text-xs" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <TextField.Root className="flex-1">
+                      <Input.Root
+                        placeholder="Add a tag"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTag();
+                          }
+                        }}
+                      />
+                    </TextField.Root>
+                    <Button variant="ghost" size="sm" onPress={addTag} type="button">
+                      Add
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-foreground/70">
+                    Course Image
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-default-200 px-4 py-2 text-sm hover:bg-default-100">
+                      <FiUpload />
+                      Upload Image
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                    {imagePreview && (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-16 w-24 rounded object-cover"
+                      />
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-foreground/40">
+                    Upload to ImgBB. Max 5MB.
+                  </p>
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="mt-4 w-full"
+                  isDisabled={loading}
+                >
+                  Create Course
                 </Button>
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-foreground/70">
-                Syllabus
-              </label>
-              <textarea
-                id="syllabus"
-                name="syllabus"
-                rows={5}
-                placeholder="Enter course syllabus (one topic per line)"
-                className="w-full rounded-lg border border-default-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-foreground/70">
-                Course Image
-              </label>
-              <div className="flex items-center gap-4">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-default-200 px-4 py-2 text-sm hover:bg-default-100">
-                  <FiUpload />
-                  Upload Image
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </label>
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="h-16 w-24 rounded object-cover"
-                  />
-                )}
-              </div>
-              <p className="mt-1 text-xs text-foreground/40">
-                Upload to ImgBB. Max 5MB.
-              </p>
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              className="mt-4 w-full"
-              isDisabled={loading}
-            >
-              Create Course
-            </Button>
-          </form>
-        </Card.Content>
-      </Card.Root>
+              </Card.Content>
+            </Card.Root>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }

@@ -1,4 +1,9 @@
-"use client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy - TutorialsPoint",
+  description: "Learn how TutorialsPoint collects, uses, and protects your personal data.",
+};
 
 export default function PrivacyPage() {
   return (

@@ -114,13 +114,18 @@ export default function EditCoursePage() {
   }
 
   const categoriesList = [
-    "Development",
-    "Design",
-    "AI & Machine Learning",
+    "Web Development",
+    "Mobile Development",
     "Data Science",
-    "Business",
-    "Marketing",
-    "Other",
+    "Machine Learning",
+    "DSA & Algorithms",
+    "DevOps",
+    "Cybersecurity",
+    "Cloud Computing",
+    "UI/UX Design",
+    "Game Development",
+    "Programming",
+    "Android",
   ];
 
   return (

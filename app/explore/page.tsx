@@ -9,14 +9,20 @@ import { getCourses, getCategories, CoursesResponse } from "@/lib/api";
 
 export default function ExplorePage() {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
   const params: Record<string, string> = {};
-  if (search) params.search = search;
+  if (debouncedSearch) params.search = debouncedSearch;
   if (category) params.category = category;
   if (minPrice) params.minPrice = minPrice;
   if (maxPrice) params.maxPrice = maxPrice;
@@ -36,10 +42,10 @@ export default function ExplorePage() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, category, minPrice, maxPrice, sort]);
+  }, [debouncedSearch, category, minPrice, maxPrice, sort]);
 
   const hasFilters =
-    search || category || minPrice || maxPrice || sort !== "newest";
+    debouncedSearch || category || minPrice || maxPrice || sort !== "newest";
 
   const clearFilters = () => {
     setSearch("");
@@ -133,10 +139,21 @@ export default function ExplorePage() {
             ))}
       </div>
 
-      {data?.courses?.length === 0 && !isLoading && (
+      {!isLoading && data?.courses?.length === 0 && (
         <div className="py-16 text-center text-foreground/60">
-          <p className="text-lg">No courses found</p>
-          <p>Try adjusting your search or filters</p>
+          <p className="text-lg">
+            {hasFilters ? "No courses match your filters" : "No courses found"}
+          </p>
+          <p>
+            {hasFilters
+              ? "Try adjusting your search or filters"
+              : "Be the first to create a course!"}
+          </p>
+          {hasFilters && (
+            <Button variant="ghost" onPress={clearFilters} className="mt-4">
+              <FiX className="mr-1" /> Clear Filters
+            </Button>
+          )}
         </div>
       )}
 

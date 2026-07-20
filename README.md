@@ -1,181 +1,154 @@
 # TutorialsPoint - AI-Powered Learning Platform (Frontend)
 
-A modern, AI-powered learning platform frontend built with Next.js 16, React 19, and HeroUI. Features intelligent course creation, AI chat assistance, and seamless user experience.
+A modern, AI-powered learning platform frontend built with Next.js 16, React 19, and HeroUI. Features AI-powered course generation, intelligent chat assistant, and seamless course discovery.
 
 ## 🚀 Project Overview
 
 TutorialsPoint Frontend is the client-side application for an AI-powered learning platform. It provides an intuitive interface for course discovery, creation, enrollment, and AI-assisted content generation using Google's Gemini AI.
 
+## ✨ Key Features
+
+### 🤖 AI-Powered Course Creation
+- **Content Generator**: Enter a topic → AI generates title, description, and syllabus
+- **Auto Classification**: AI suggests category and relevant tags from course content
+- **Regenerate**: Easy one-click regeneration
+
+### 💬 AI Chat Assistant
+- Floating widget accessible across all pages
+- Conversation history with context awareness
+- Suggested follow-up prompts
+- Powered by Google Gemini
+
+### 📚 Course Management
+- Browse courses with search, filters (category, price range), and sorting
+- Course detail pages with reviews, ratings, and related courses
+- Create, edit, and manage courses (admin role)
+- Enroll/unenroll functionality
+
+### 🔐 Authentication
+- Email/Password registration and login
+- Google OAuth integration
+- Demo login with auto-created account
+- JWT-based session management
+
+### 📊 Interactive Dashboard
+- Recharts-powered statistics on landing page
+- Enrolled courses view for students
+- Full course management for admins
+- Responsive admin panel
+
 ## 🛠 Technology Stack
 
-| Category | Technology | Version |
-|----------|------------|---------|
-| **Framework** | Next.js (App Router) | 16.2.10 |
-| **Language** | TypeScript | 5.x |
-| **UI Library** | HeroUI | 3.2.2 |
-| **Styling** | Tailwind CSS | 4.x |
-| **State Management** | TanStack Query | 5.101.2 |
-| **Icons** | React Icons | 5.7.0 |
-| **Notifications** | React Toastify | 11.1.0 |
-| **Charts** | Recharts | 3.9.2 |
-| **Carousel/Slider** | Swiper.js | 14.0.5 |
-| **Animations** | Framer Motion | 12.42.2 |
-| **Auth Client** | Better-Auth | 1.6.23 |
-| **React** | React / React DOM | 19.2.4 |
+| Category | Technology |
+|----------|------------|
+| **Framework** | Next.js 16 (App Router) |
+| **Language** | TypeScript |
+| **UI Library** | HeroUI 3 |
+| **Styling** | Tailwind CSS 4 |
+| **State Management** | TanStack Query 5 |
+| **Charts** | Recharts |
+| **Carousel** | Swiper.js |
+| **Auth Client** | Better-Auth |
+| **AI Provider** | Google Gemini |
+| **Notifications** | React Toastify |
+| **Icons** | React Icons |
 
 ## 📁 Directory Structure
 
 ```
 tutorialpoints/
-├── app/                    # Next.js App Router pages
-│   ├── (auth)/            # Login, Register pages
-│   ├── (dashboard)/       # Protected dashboard routes
-│   ├── (public)/          # Public pages (explore, course details)
-│   ├── api/               # API routes (AI chat, auth proxy)
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Landing page
-│   └── globals.css        # Global styles
+├── app/
+│   ├── page.tsx              # Landing page (Hero, Features, Stats, FAQ, CTA)
+│   ├── layout.tsx            # Root layout with metadata
+│   ├── globals.css           # Global styles + CSS variables
+│   ├── providers.tsx         # TanStack Query + Navbar + Footer + Toast + AI Chat
+│   ├── not-found.tsx         # Custom 404 page
+│   ├── explore/              # Course browsing with search, filter, sort
+│   ├── courses/
+│   │   ├── [id]/             # Course detail page
+│   │   ├── new/              # Create course (AI-powered)
+│   │   ├── manage/           # Manage courses
+│   │   └── [id]/edit/        # Edit course
+│   ├── login/                # Login (email, Google OAuth, Demo)
+│   ├── register/             # Registration
+│   ├── about/                # About page
+│   ├── contact/              # Contact form
+│   ├── help/                 # FAQ page
+│   ├── privacy/              # Privacy policy
+│   ├── terms/                # Terms of service
+│   ├── admin/                # Admin dashboard
+│   └── api/
+│       ├── auth/[...all]/    # Better-Auth proxy
+│       └── ai/chat/          # AI chat endpoint
 ├── components/
-│   ├── ui/                # Base UI components (Button, Card, Input, etc.)
-│   ├── forms/             # Form components
-│   ├── layout/            # Navbar, Footer, Sidebar
-│   ├── services/          # Service/Course related components
-│   ├── chat/              # AI Chat Widget components
-│   └── providers/         # Context providers
-├── lib/
-│   ├── api.ts             # API client with token management
-│   ├── auth-client.ts     # Better-Auth client config
-│   ├── auth.ts            # Auth utilities
-│   ├── utils.ts           # Helper functions
-│   └── validations.ts     # Zod schemas
-├── hooks/                 # Custom React hooks
-├── types/                 # TypeScript type definitions
-├── public/                # Static assets
-└── package.json
+│   ├── Navbar.tsx            # Sticky, role-based navigation
+│   ├── Footer.tsx            # Multi-column footer
+│   ├── CourseCard.tsx        # Course card + skeleton
+│   ├── ReviewCard.tsx        # Review display
+│   ├── StarRating.tsx        # Interactive/display star rating
+│   └── AIChatAssistant.tsx   # Floating AI chat widget
+└── lib/
+    ├── api.ts                # Backend API client
+    ├── auth-client.ts        # Better-Auth client
+    └── auth.ts               # Auth server config
 ```
 
 ## ⚡ Quick Start
 
 ### Prerequisites
-nvm use 22
-npm install
+- Node.js 22+
+- MongoDB (local or Atlas)
+- Google Gemini API key
+- ImgBB API key
 
+### Installation
+
+```bash
+cd tutorialpoints
+npm install
+```
 
 ### Environment Variables
 
-Create `.env.local` in the tutorialpoints directory:
+Create `.env.local`:
 
 ```env
-# Backend API URL
 NEXT_PUBLIC_API_URL=http://localhost:4000
-
-# Image Hosting (ImgBB)
 NEXT_PUBLIC_IMGBB_KEY=your_imgbb_api_key
-
-# Google Gemini AI
 NEXT_PUBLIC_GEMINI_KEY=your_gemini_api_key
 ```
 
 ### Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Run linting
-npm run lint
-
-# Production build
-npm run build
-
-# Start production server
-npm run start
+npm run dev      # Start dev server at http://localhost:3000
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
 ```
 
-The app will be available at `http://localhost:3000`
+## 🌐 Pages Overview
 
-## 🔑 Key Features
-
-### 1. AI-Powered Course Creation
-- **Content Generator**: Transform any topic into structured course content (title, description, syllabus)
-- **Smart Classification**: Auto-categorize courses and generate relevant tags
-- **Difficulty Assessment**: AI determines beginner/intermediate/advanced level
-
-### 2. Course Discovery & Management
-- Browse courses with search, filters (category, price, rating), and sorting
-- Course detail pages with galleries, reviews, and related courses
-- Enrollment management with progress tracking
-
-### 3. AI Chat Assistant
-- Floating chat widget accessible across all pages
-- Context-aware responses based on current page and user history
-- Streaming responses with typing indicators
-- Suggested follow-up prompts
-
-### 4. User Dashboard
-- Create and manage courses
-- View enrollments and progress
-- Favorites/bookmarks
-- Messages with providers
-- Profile settings
-
-### 5. Authentication
-- Email/Password registration and login
-- Google OAuth (via Better-Auth)
-- Protected routes with middleware
-- Session management with httpOnly cookies
-
-## 📦 Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with Turbopack |
-| `npm run build` | Create production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint for code quality |
-
-## 🔧 Configuration Files
-
-- `next.config.ts` - Next.js configuration
-- `tailwind.config.ts` - Tailwind CSS configuration
-- `tsconfig.json` - TypeScript configuration
-- `eslint.config.mjs` - ESLint configuration
-- `.env.local` - Environment variables (create from `.env.example`)
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-
-1. Push to GitHub
-2. Import project in Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy
-
-```bash
-# Build verification
-npm run build
-```
-
-### Docker (Optional)
-
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
+| Route | Access | Description |
+|-------|--------|-------------|
+| `/` | Public | Landing page with 8 sections |
+| `/explore` | Public | Browse courses with search, filters, pagination |
+| `/courses/[id]` | Public | Course details, reviews, enrollment |
+| `/courses/new` | Auth | Create course with AI generator |
+| `/courses/manage` | Auth | View enrolled/manage courses |
+| `/courses/[id]/edit` | Admin | Edit course details |
+| `/login` | Public | Email, Google OAuth, Demo login |
+| `/register` | Public | Create account |
+| `/about` | Public | Platform information |
+| `/contact` | Public | Contact form |
+| `/help` | Public | FAQ |
+| `/privacy` | Public | Privacy policy |
+| `/terms` | Public | Terms of service |
+| `/admin` | Admin | Course management dashboard |
 
 ## 🔗 Related
 
-- **Backend Repository**: [backend/README.md](../backend/README.md)
-- **Full Documentation**: See implementation plan
+- **Backend**: [backend/README.md](../backend/README.md)
 
 ---
 
