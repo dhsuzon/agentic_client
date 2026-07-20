@@ -2,16 +2,37 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Button, Card } from "@heroui/react";
+import { Button, Card, Skeleton } from "@heroui/react";
 import { FiPlus, FiShield, FiUsers, FiBookOpen, FiBook, FiGrid, FiTrendingUp, FiMonitor } from "react-icons/fi";
 import { getAdminStats } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
+
+const statCards = [
+  { icon: FiBookOpen, label: "Total Courses", key: "totalCourses" as const },
+  { icon: FiUsers, label: "Total Users", key: "totalUsers" as const },
+  { icon: FiBook, label: "Total Enrollments", key: "totalEnrollments" as const },
+  { icon: FiGrid, label: "Total Categories", key: "totalCategories" as const },
+  { icon: FiTrendingUp, label: "Most Used Category", key: "topCategory" as const },
+  { icon: FiMonitor, label: "Platform", key: "platform" as const },
+];
+
+function StatCardSkeleton() {
+  return (
+    <Card.Root className="rounded-xl">
+      <Card.Content className="flex flex-col items-center gap-3 p-4 text-center">
+        <Skeleton className="h-6 w-6 rounded-full" />
+        <Skeleton className="h-7 w-16 rounded-lg" />
+        <Skeleton className="h-4 w-20 rounded-lg" />
+      </Card.Content>
+    </Card.Root>
+  );
+}
 
 export default function AdminPage() {
   const router = useRouter();
   const { data: session, isPending: authLoading } = useSession();
 
-  const { data: statsData } = useQuery<any>({
+  const { data: statsData, isPending } = useQuery<any>({
     queryKey: ["admin-stats"],
     queryFn: getAdminStats,
     enabled: !!session && session.user?.role === "admin",
@@ -63,48 +84,30 @@ export default function AdminPage() {
       </div>
 
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiBookOpen className="text-2xl text-primary" />
-            <p className="text-2xl font-bold">{statsData?.totalCourses ?? "-"}</p>
-            <p className="text-sm text-foreground/60">Total Courses</p>
-          </Card.Content>
-        </Card.Root>
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiUsers className="text-2xl text-primary" />
-            <p className="text-2xl font-bold">{statsData?.totalUsers ?? "-"}</p>
-            <p className="text-sm text-foreground/60">Total Users</p>
-          </Card.Content>
-        </Card.Root>
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiBook className="text-2xl text-primary" />
-            <p className="text-2xl font-bold">{statsData?.totalEnrollments ?? "-"}</p>
-            <p className="text-sm text-foreground/60">Total Enrollments</p>
-          </Card.Content>
-        </Card.Root>
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiGrid className="text-2xl text-primary" />
-            <p className="text-2xl font-bold">{statsData?.totalCategories ?? "-"}</p>
-            <p className="text-sm text-foreground/60">Total Categories</p>
-          </Card.Content>
-        </Card.Root>
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiTrendingUp className="text-2xl text-primary" />
-            <p className="text-2xl font-bold truncate max-w-full">{statsData?.topCategory ?? "-"}</p>
-            <p className="text-sm text-foreground/60">Most Used Category</p>
-          </Card.Content>
-        </Card.Root>
-        <Card.Root className="rounded-xl">
-          <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
-            <FiMonitor className="text-2xl text-primary" />
-            <p className="text-2xl font-bold">1</p>
-            <p className="text-sm text-foreground/60">Platform</p>
-          </Card.Content>
-        </Card.Root>
+        {isPending
+          ? Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
+          : statCards.map((card) => {
+              const Icon = card.icon;
+              let value: string | number;
+              if (card.key === "platform") {
+                value = 1;
+              } else if (card.key === "topCategory") {
+                value = statsData?.[card.key] ?? "-";
+              } else {
+                value = statsData?.[card.key] ?? "-";
+              }
+              return (
+                <Card.Root key={card.key} className="rounded-xl">
+                  <Card.Content className="flex flex-col items-center gap-1 p-4 text-center">
+                    <Icon className="text-2xl text-primary" />
+                    <p className={`text-2xl font-bold ${card.key === "topCategory" ? "truncate max-w-full" : ""}`}>
+                      {value}
+                    </p>
+                    <p className="text-sm text-foreground/60">{card.label}</p>
+                  </Card.Content>
+                </Card.Root>
+              );
+            })}
       </div>
     </div>
   );
