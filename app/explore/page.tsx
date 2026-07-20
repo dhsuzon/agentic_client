@@ -144,15 +144,18 @@ export default function ExplorePage() {
 
       {!isLoading && data?.courses?.length === 0 && (
         <div className="py-16 text-center text-foreground/60">
-          <p className="text-lg">No courses found</p>
-          <p>{isAdmin ? "Be the first to create a course!" : "No courses available yet"}</p>
-          {hasFilters && (
+          {hasFilters ? (
             <>
-              <p className="mt-4 text-lg">No courses match your filters</p>
+              <p className="text-lg">No courses match your filters</p>
               <p>Try adjusting your search or filters</p>
               <Button variant="ghost" onPress={clearFilters} className="mt-4">
                 <FiX className="mr-1" /> Clear Filters
               </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-lg">No courses available</p>
+              <p>Check back later for new courses</p>
             </>
           )}
         </div>

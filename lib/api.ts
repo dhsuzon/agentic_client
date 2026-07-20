@@ -95,6 +95,16 @@ export function getCategories() {
   return api<{ categories: string[] }>("/api/courses/categories");
 }
 
+export function getAdminStats() {
+  return api<{
+    totalCourses: number;
+    totalUsers: number;
+    totalEnrollments: number;
+    totalCategories: number;
+    topCategory: string | null;
+  }>("/api/courses/stats");
+}
+
 export function enrollCourse(courseId: string) {
   return api<{ enrollment: any }>("/api/enrollments", {
     method: "POST",

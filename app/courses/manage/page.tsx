@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button, Card, Skeleton, Chip } from "@heroui/react";
-import { FiPlus, FiTrash2, FiEye, FiBook } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiEye, FiBook, FiClock, FiDollarSign } from "react-icons/fi";
 import { toast } from "react-toastify";
 import {
   getMyEnrollments,
@@ -20,6 +20,7 @@ export default function ManageCoursesPage() {
   const queryClient = useQueryClient();
   const { data: session, isPending: authLoading } = useSession();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const isAdmin = session?.user?.role === "admin";
 
   const { data: enrollData, isLoading: enrollLoading } = useQuery<any>({
@@ -29,8 +30,8 @@ export default function ManageCoursesPage() {
   });
 
   const { data: allCoursesData, isLoading: allCoursesLoading } = useQuery<any>({
-    queryKey: ["courses", "all"],
-    queryFn: () => getCourses({ limit: "100" }),
+    queryKey: ["courses", "manage", page],
+    queryFn: () => getCourses({ page: String(page), limit: "8" }),
     enabled: !!session && isAdmin,
   });
 
@@ -97,7 +98,7 @@ export default function ManageCoursesPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <Card.Root key={i} className="rounded-xl">
               <Card.Content className="p-4">
@@ -125,75 +126,80 @@ export default function ManageCoursesPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course: any) => (
-            <Card.Root key={course._id} className="overflow-hidden rounded-xl">
+            <Card.Root key={course._id} className="group h-full overflow-hidden rounded-xl transition-shadow hover:shadow-lg">
               <div className="relative aspect-video overflow-hidden bg-default-100">
                 {course.image ? (
                   <Image
                     src={course.image}
                     alt={course.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-3xl text-default-300">
-                    <FiBook />
+                  <div className="flex h-full items-center justify-center text-4xl text-default-300">
+                    <FiClock />
                   </div>
                 )}
-              </div>
-              <Card.Content className="p-4">
-                <div className="mb-1 flex items-center gap-2">
-                  <Chip variant="soft" size="sm" className="text-xs">
+                <div className="absolute right-2 top-2 flex gap-1">
+                  <span className="rounded-full bg-primary/90 px-2 py-1 text-xs text-white">
                     {course.category}
-                  </Chip>
-                  <Chip variant="soft" size="sm" className="text-xs">
-                    ${course.price}
-                  </Chip>
+                  </span>
                 </div>
-                <Card.Title className="mb-2 line-clamp-1 text-base">
-                  {course.title}
-                </Card.Title>
-                <Card.Description className="mb-4 line-clamp-2 text-sm text-foreground/60">
+              </div>
+              <Card.Content className="flex flex-1 flex-col gap-2 p-4">
+                <Card.Title className="line-clamp-1 text-base">{course.title}</Card.Title>
+                <Card.Description className="line-clamp-2 text-sm text-foreground/60">
                   {course.description}
                 </Card.Description>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1"
-                    onPress={() => router.push(`/courses/${course._id}`)}
-                  >
-                    <FiEye /> View
-                  </Button>
-                  {isAdmin && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                        onPress={() =>
-                          router.push(`/courses/${course._id}/edit`)
-                        }
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        isIconOnly
-                        aria-label="Delete course"
-                        onPress={() => setDeleteId(course._id)}
-                      >
-                        <FiTrash2 />
-                      </Button>
-                    </>
-                  )}
+                <div className="mt-auto flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-1 text-sm font-semibold text-primary">
+                    <FiDollarSign className="text-base" />
+                    {course.price === 0 ? "Free" : course.price}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="primary" size="sm" onPress={() => router.push(`/courses/${course._id}`)}>
+                      <FiEye /> View
+                    </Button>
+                    {isAdmin && (
+                      <>
+                        <Button variant="ghost" size="sm" onPress={() => router.push(`/courses/${course._id}/edit`)}>
+                          Edit
+                        </Button>
+                        <Button variant="danger" size="sm" isIconOnly aria-label="Delete course" onPress={() => setDeleteId(course._id)}>
+                          <FiTrash2 />
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </Card.Content>
             </Card.Root>
           ))}
+        </div>
+      )}
+
+      {isAdmin && allCoursesData?.pagination && !isLoading && courses.length > 0 && (
+        <div className="mt-8 flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            isDisabled={page <= 1}
+            onPress={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="px-4 text-sm">
+            Page {page} of {allCoursesData.pagination.totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            isDisabled={page >= allCoursesData.pagination.totalPages}
+            onPress={() => setPage((p) => p + 1)}
+          >
+            Next
+          </Button>
         </div>
       )}
 
