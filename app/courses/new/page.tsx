@@ -211,6 +211,17 @@ export default function AddCoursePage() {
     );
   }
 
+  if (session.user?.role !== "admin") {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <p className="text-lg">Only admins can add courses</p>
+        <Button variant="ghost" onPress={() => router.push("/courses/manage")}>
+          Back to My Courses
+        </Button>
+      </div>
+    );
+  }
+
   const categoriesList = [
     "Web Development",
     "Mobile Development",

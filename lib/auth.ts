@@ -21,6 +21,12 @@ export function getAuth() {
       },
     },
     database: mongodbAdapter(client.db("tutorialpoints")),
+    account: {
+      accountLinking: {
+        requireLocalEmailVerified: false,
+        trustedProviders: ["google"],
+      },
+    },
     emailAndPassword: {
       enabled: true,
     },

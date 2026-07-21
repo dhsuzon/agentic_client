@@ -9,7 +9,7 @@ import {
   getMyEnrollments,
   getCourses,
   deleteCourse,
-  enrollCourse,
+  unenrollCourse,
 } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
 import { useState, useEffect } from "react";
@@ -42,9 +42,21 @@ export default function ManageCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       toast.success("Course deleted");
       setDeleteId(null);
+      setPage(1);
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to delete");
+    },
+  });
+
+  const unenrollMutation = useMutation({
+    mutationFn: unenrollCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
+      toast.success("Unenrolled successfully");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to unenroll");
     },
   });
 
@@ -53,7 +65,7 @@ export default function ManageCoursesPage() {
   const courses = isAdmin
     ? allCoursesData?.courses || []
     : (enrollData?.enrollments || [])
-        .map((e: any) => e.course || e)
+        .map((e: any) => e.course)
         .filter(Boolean);
 
   if (authLoading) return null;
@@ -163,7 +175,7 @@ export default function ManageCoursesPage() {
                     <Button variant="primary" size="sm" onPress={() => router.push(`/courses/${course._id}`)}>
                       <FiEye /> View
                     </Button>
-                    {isAdmin && (
+                    {isAdmin ? (
                       <>
                         <Button variant="ghost" size="sm" onPress={() => router.push(`/courses/${course._id}/edit`)}>
                           Edit
@@ -172,6 +184,15 @@ export default function ManageCoursesPage() {
                           <FiTrash2 />
                         </Button>
                       </>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        isDisabled={unenrollMutation.isPending}
+                        onPress={() => unenrollMutation.mutate(course._id)}
+                      >
+                        Unenroll
+                      </Button>
                     )}
                   </div>
                 </div>
